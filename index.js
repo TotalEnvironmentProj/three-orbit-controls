@@ -512,8 +512,24 @@ module.exports = function(THREE) {
 				rotateEnd.set( event.clientX, event.clientY );
 				rotateDelta.subVectors( rotateEnd, rotateStart );
 
+				var centerOfCanvas = new THREE.Vector2( element.clientWidth / 2, element.clientHeight / 2 );
+
+				var centerToRotateStart = new THREE.Vector2().subVectors( rotateStart, centerOfCanvas );
+				var centerToRotateEnd = new THREE.Vector2().subVectors( rotateEnd, centerOfCanvas );
+
+				var normalOfCenterToRotateStart = new THREE.Vector2( centerToRotateStart.y, -centerToRotateStart.x );
+
+				var normalizedRotateStartVector = centerToRotateStart.clone().normalize();
+				var normalizedRotateEndVector = centerToRotateEnd.clone().normalize();
+
+				var angle = Math.acos( normalizedRotateEndVector.dot( normalizedRotateStartVector ) );
+
+				var magnitude = normalOfCenterToRotateStart.dot( rotateDelta );
+
+				var magnitudeBasedAngle = angle * ( magnitude / Math.abs(magnitude) ) * scope.rotateSpeed;
+
 				// rotating across whole screen goes 360 degrees around
-				constraint.rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientWidth * scope.rotateSpeed );
+				constraint.rotateLeft( magnitudeBasedAngle ? magnitudeBasedAngle : 0 );
 
 				// rotating up and down along whole screen attempts to go 360, but limited to 180
 				constraint.rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight * scope.rotateSpeed );
