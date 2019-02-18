@@ -87,6 +87,10 @@ module.exports = function(THREE) {
 
 		};
 
+		this.overrideLeftRotation = function ( angle ) {
+			thetaDelta = angle;
+		}
+
 		// pass in distance in world space to move left
 		this.panLeft = function() {
 
