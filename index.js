@@ -223,8 +223,10 @@ module.exports = function(THREE) {
 				offset.applyQuaternion( quat );
 
 				// angle from z-axis around y-axis
-
-				theta = Math.atan2( offset.x, offset.z );
+				// TE Fix: Math.atan2 returns -π/2 when x =~ 0, but not exactly 0
+				// We make it zero when it's very small. This model suddenly rotating.
+				var offsetX = Math.abs(offset.x) < 1e-13 ? 0 : offset.x;
+				theta = Math.atan2( offsetX, offset.z );
 
 				// angle from y-axis
 
